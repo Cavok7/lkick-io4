@@ -50,6 +50,8 @@ namespace component {
         void usb_init();
 
         [[noreturn]] void tud(void *pVoid);
+        
+        [[noreturn]] void lever_sampling(void *pVoid);
 
         void process_data(const input_t *data);
     }

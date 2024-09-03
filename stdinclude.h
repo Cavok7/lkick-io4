@@ -55,12 +55,12 @@
 
 // #define BTN_LMENU_PIN 16 // re-wire from 16
 // #define BTN_RMENU_PIN 17 // re-wire from 17
-#define BTN_LMENU_PIN 21 // re-wire from 16
-#define BTN_RMENU_PIN 22 // re-wire from 17
+#define BTN_LMENU_PIN 22 // re-wire from 16
+#define BTN_RMENU_PIN 21 // re-wire from 17
 
 #define BTN_SERV_PIN 18
 #define BTN_TEST_PIN 19
-#define BTN_COIN_PIN 20
+#define BTN_HELLO_PIN 20
 
 #define LEVER_PIN 28
 

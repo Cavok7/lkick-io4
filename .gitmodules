@@ -1,9 +1,10 @@
 [submodule "pico-sdk"]
 	path = pico-sdk
 	url = https://github.com/raspberrypi/pico-sdk/
-[submodule "freertos/FreeRTOS-Kernel"]
-	path = freertos/FreeRTOS-Kernel
+[submodule "FreeRTOS-Kernel"]
+	path = FreeRTOS-Kernel
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel/
 [submodule "src/PicoLed"]
 	path = src/PicoLed
-	url = https://github.com/ForsakenNGS/PicoLED
+	url = https://github.com/satorusaka/PicoLED/
+	branch = Inverted

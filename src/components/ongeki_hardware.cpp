@@ -1,9 +1,4 @@
-
 #include "stdinclude.h"
-#include <array>
-
-#include "pico/stdlib.h"
-
 #include "hardware/adc.h"
 #include "pico/bootrom.h"
 #include "pico/error.h"
@@ -50,19 +45,19 @@ namespace component {
 
 
     
-    auto LED_L1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_L1_PIN, 1, PicoLed::FORMAT_GRB);
-    auto LED_L2 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 1, LED_L2_PIN, 1, PicoLed::FORMAT_GRB);
-    auto LED_L3 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 2, LED_L3_PIN, 1, PicoLed::FORMAT_GRB);
-    auto LED_R1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 3, LED_R1_PIN, 1, PicoLed::FORMAT_GRB);
-    auto LED_R2 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0, LED_R2_PIN, 1, PicoLed::FORMAT_GRB);
-    auto LED_R3 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 1, LED_R3_PIN, 1, PicoLed::FORMAT_GRB);
+    auto LED_L1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_L1_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_L2 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 1, LED_L2_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_L3 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 2, LED_L3_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_R1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 3, LED_R1_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_R2 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0, LED_R2_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_R3 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 1, LED_R3_PIN, 1, PicoLed::FORMAT_GRB, 1);
     
     std::array<PicoLed::PicoLedController, 6> leds = {LED_R1, LED_R2, LED_R3, LED_L1, LED_L2, LED_L3};
 
     bool hasI2cLever = false;
     uint8_t addr = 0b0000110;
     uint8_t reg1 = 0x03, reg2 = 0x04;
-    ResponsiveAnalogRead analog(LEVER_PIN, true, 0.0005);
+    ResponsiveAnalogRead analog(LEVER_PIN, false, 0.00005);
     namespace ongeki_hardware {
         void init() {
 
@@ -91,6 +86,7 @@ namespace component {
         {
                 23, 20, 22, 19, 21, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6
         };
+bool inHello = false;
 
         void set_led(uint ledData) {
             const uint8_t bitOffsets[6][3] = {{9,0,0}, {9,3,0}, {9,6,0}, {0,0,0}, {0,3,0}, {0,6,0}};
@@ -142,19 +138,42 @@ namespace component {
             data->switches[0] = 0;
             data->switches[1] = 0;
 
-            if (!gpio_get(BTN_COIN_PIN)) {
-                if (!coin) {
-                    data->coin[0].count++;
-                    data->coin[1].count++;
-                    coin = true;
+            inHello = !gpio_get(BTN_HELLO_PIN);
+            do {
+                if (!inHello) break;
+
+                if (!gpio_get(PIN_MAP[7])) {
+                    reset_usb_boot(0, 0);
                 }
-            } else {
-                coin = false;
-            }
-            
+                if (!gpio_get(PIN_MAP[0])) {
+                    data->switches[0] += (1 << 9) + (1 << 6);
+                }
+
+                if (!gpio_get(PIN_MAP[1])) {
+                    if (!coin) {
+                        data->coin[0].count++;
+                        data->coin[1].count++;
+                        coin = true;
+                    }
+                } else {
+                    coin = false;
+                }
+
+                if (!gpio_get(PIN_MAP[6])) {
+                    if (!rg) {
+                        rg = true;
+                        uint8_t mode = config::cycle_mode();
+                        show_mode_effect(mode);
+                    }
+                } else {
+                    rg = false;
+                }
+
+            } while (false);
+
             coin = false;
             rg = false;
-
+            
             for (auto i = 0; i < 12; i++) {
                 auto read = gpio_get(PIN_MAP[i]) ^ PIN_BIT[i];
                 if (read) {
@@ -176,10 +195,16 @@ namespace component {
                 data->analog[0] = *(int16_t *) &finalResult;
                 data->rotary[0] = *(int16_t *) &finalResult;
             } else {
-                analog.update();
                 uint16_t raw = analog.getValue() << 4;
                 data->analog[0] = *(int16_t *) &raw;
                 data->rotary[0] = *(int16_t *) &raw;
+            }
+        }
+
+        void update_analog()
+        {
+            for (int i = 0; i < 200; i++) {
+                analog.update();
             }
         }
 
@@ -192,25 +217,25 @@ namespace component {
             data->modifier = 0;
             memset(data->keycodes, 0, sizeof(data->keycodes));
 
-            // inHello = !gpio_get(5);
-            // do {
-            //     if (!inHello) break;
+            inHello = !gpio_get(BTN_HELLO_PIN);
+            do {
+                if (!inHello) break;
 
-            //     if (!gpio_get(PIN_MAP[7])) {
-            //         reset_usb_boot(0, 0);
-            //     }
+                if (!gpio_get(PIN_MAP[7])) {
+                    reset_usb_boot(0, 0);
+                }
 
-            //     if (!gpio_get(PIN_MAP[6])) {
-            //         if (!rg) {
-            //             rg = true;
-            //             uint8_t mode = config::cycle_mode();
-            //             show_mode_effect(mode);
-            //         }
-            //     } else {
-            //         rg = false;
-            //     }
+                if (!gpio_get(PIN_MAP[6])) {
+                    if (!rg) {
+                        rg = true;
+                        uint8_t mode = config::cycle_mode();
+                        show_mode_effect(mode);
+                    }
+                } else {
+                    rg = false;
+                }
 
-            // } while (false);
+            } while (false);
 
             rg = false;
 
