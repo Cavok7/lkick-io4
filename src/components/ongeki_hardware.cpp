@@ -66,7 +66,9 @@ namespace component {
                 gpio_set_dir(i, GPIO_IN);
                 gpio_pull_up(i);
             }
-            
+            gpio_init(BTN_HELLO_PIN);
+            gpio_set_dir(BTN_HELLO_PIN, GPIO_IN);
+            gpio_pull_up(BTN_HELLO_PIN);
             gpio_init(PICO_DEFAULT_LED_PIN);
             gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
 
