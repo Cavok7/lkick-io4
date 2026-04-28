@@ -45,12 +45,12 @@ namespace component {
 
 
     
-    auto LED_L1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_L1_PIN, 1, PicoLed::FORMAT_GRB, 1);
-    auto LED_L2 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 1, LED_L2_PIN, 1, PicoLed::FORMAT_GRB, 1);
-    auto LED_L3 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 2, LED_L3_PIN, 1, PicoLed::FORMAT_GRB, 1);
-    auto LED_R1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 3, LED_R1_PIN, 1, PicoLed::FORMAT_GRB, 1);
-    auto LED_R2 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0, LED_R2_PIN, 1, PicoLed::FORMAT_GRB, 1);
-    auto LED_R3 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 1, LED_R3_PIN, 1, PicoLed::FORMAT_GRB, 1);
+    auto LED_L1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 0, LED_L1_PIN, 1, PicoLed::FORMAT_GRB, 0);
+    auto LED_L2 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 1, LED_L2_PIN, 1, PicoLed::FORMAT_GRB, 0);
+    auto LED_L3 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 2, LED_L3_PIN, 1, PicoLed::FORMAT_GRB, 0);
+    auto LED_R1 = PicoLed::addLeds<PicoLed::WS2812B>(pio0, 3, LED_R1_PIN, 1, PicoLed::FORMAT_GRB, 0);
+    auto LED_R2 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 0, LED_R2_PIN, 1, PicoLed::FORMAT_GRB, 0);
+    auto LED_R3 = PicoLed::addLeds<PicoLed::WS2812B>(pio1, 1, LED_R3_PIN, 1, PicoLed::FORMAT_GRB, 0);
     
     std::array<PicoLed::PicoLedController, 6> leds = {LED_R1, LED_R2, LED_R3, LED_L1, LED_L2, LED_L3};
 
