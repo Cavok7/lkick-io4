@@ -100,8 +100,6 @@ extern "C" {
 
 #define CFG_TUD_HID_BUFSIZE         64
 
-#define TUP_DCD_ENDPOINT_MAX        8
-
 #ifdef __cplusplus
 }
 #endif
