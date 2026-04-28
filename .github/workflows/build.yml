@@ -1,24 +1,29 @@
 name: Build
-
-on: [push]
-
+on: 
+  push:
+  workflow_dispatch:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          submodules: 'recursive'
-      - run: |
+          submodules: recursive
+      - name: Install dependencies
+        run: |
           sudo apt update
-          sudo apt install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential ninja-build
-      - run: |
-          mkdir build
+          sudo apt install -y cmake build-essential ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev wget tar
+      - name: Configure build
+        run: |
+          mkdir -p build
           cd build
           cmake -G Ninja ..
+      - name: Build
+        run: |
+          cd build
           ninja
-      - uses: actions/upload-artifact@v4
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
         with:
           name: firmware.uf2
-          path: ./**/*.uf2
+          path: build/**/*.uf2
